@@ -1,0 +1,31 @@
+package com.sample
+
+import com.sample.BusinessTrip;
+
+rule "출장일비 없음"
+    when
+        bt:BusinessTrip(hour < 4, name: name)
+    then
+        System.out.println(name + "님의 출장 시간은 " + bt.getHour() + " 시간이므로 출장일비가 없습니다.");
+    end
+
+rule "출장일비 C"
+    when
+        bt:BusinessTrip(hour >=4, hour < 8, name: name)
+    then
+        System.out.println(name + "님의 출장시간은 " + bt.getHour() + "시간이므로, 출장일비는 8만원 입니다.");
+    end
+
+rule "출장일비 B"
+    when
+        bt:BusinessTrip(hour >=8, hour < 12, name: name)
+    then
+        System.out.println(name + "님의 출장시간은 " + bt.getHour() + "시간이므로, 출장일비는 12만원 입니다.");
+    end
+
+rule "출장일비 A"
+    when
+        bt:BusinessTrip(hour >=12, name: name)
+    then
+        System.out.println(name + "님의 출장시간은 " + bt.getHour() + "시간이므로, 출장일비는 20만원 입니다.");
+    end

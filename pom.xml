@@ -6,6 +6,7 @@
 
   <groupId>com.sample</groupId>
   <artifactId>drools</artifactId>
+  <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
 
   <build>

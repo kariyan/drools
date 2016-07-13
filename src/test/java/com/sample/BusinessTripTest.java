@@ -5,10 +5,15 @@
  *******************************************************************************/
 package com.sample;
 
+import java.util.Collection;
+
 import org.junit.Test;
 import org.kie.api.KieBase;
+import org.kie.api.KieServices;
 import org.kie.api.io.ResourceType;
+import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.StatelessKieSession;
 import org.kie.internal.builder.KnowledgeBuilder;
 import org.kie.internal.builder.KnowledgeBuilderFactory;
 import org.kie.internal.io.ResourceFactory;
@@ -32,8 +37,16 @@ public class BusinessTripTest {
     @Test
     public void testBusinessTrip() {
         //
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieContainer = kieServices.getKieClasspathContainer();
+
+        KieBase kieBase = kieContainer.getKieBase("KBase1");
+        KieSession kieSession = kieContainer.newKieSession("KSession2_1");
+        Collection<String> kieBaseNames = kieContainer.getKieBaseNames();
+        StatelessKieSession statelessKieSession = kieContainer.newStatelessKieSession("KSession2_2");
+
         KnowledgeBuilder builder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-        builder.add(ResourceFactory.newClassPathResource("com/sample/sample.drl"), ResourceType.DRL);
+        builder.add(ResourceFactory.newClassPathResource("META-INF/sample.drl"), ResourceType.DRL);
 
         KieBase base = builder.newKnowledgeBase();
         KieSession session = base.newKieSession();

@@ -1,0 +1,8 @@
+import com.sample.BusinessTrip;
+
+rule "출장일비 A"
+    when
+        $bt:BusinessTrip(hour >=12)
+    then
+        System.out.println($bt.getName() + "님의 출장시간은 " + $bt.getHour() + "시간이므로, 출장일비는 20만원 입니다.");
+    end

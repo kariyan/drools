@@ -1,0 +1,8 @@
+import model.Stand
+
+rule "Get Max Stand"
+when $stand: Stand(capacityGrade == "F")
+then System.out.println($stand.getId());
+ end
+
+

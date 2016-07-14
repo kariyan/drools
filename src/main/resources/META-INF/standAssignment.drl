@@ -1,8 +1,33 @@
-import model.Stand
+package model;
 
 rule "Get Max Stand"
-when $stand: Stand(capacityGrade == "F")
-then System.out.println($stand.getId());
+    when
+        $flightLeg: FlightLeg()
+        $availableStand: AvailableStand()
+        $stand: Stand(capacityGrade >= $flightLeg.getCapacityGrade())
+        not $impairmentStand: ImpairmentStand(standIds.contains($stand.getId()))
+    then
+        System.out.println($stand.getId() + ", " + $stand.getCapacityGrade() );
+        $availableStand.add($stand.getId(), 10);
+end
+
+
+rule "Preference Stand"
+    when
+        $flightLeg: FlightLeg()
+        $availableStand: AvailableStand()
+        $preferenceStand: PreferenceStand(airlineUsid == $flightLeg.airlineIataCode, standUsids.contains(6))
+    then
+        System.out.println($preferenceStand.getStandUsids());
+        $availableStand.add($preferenceStand.getStandUsids(), 20);
+end
+
+/*
+
+rule "test"
+when
+    $flightLeg: FlightLeg()
+then
+    System.out.println($flightLeg.getCapacityGrade());
  end
-
-
+ */

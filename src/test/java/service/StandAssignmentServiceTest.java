@@ -6,6 +6,7 @@
 package service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -14,14 +15,17 @@ import org.kie.api.KieServices;
 import org.kie.api.command.Command;
 import org.kie.api.command.KieCommands;
 import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.StatelessKieSession;
 
+import model.AvailableStand;
 import model.FlightLeg;
 import model.FlightSector;
 import model.FlightType;
 import model.ImpairmentStand;
 import model.PreferenceStand;
 import model.Stand;
+import model.StandScore;
 
 /**
  *
@@ -51,10 +55,49 @@ public class StandAssignmentServiceTest {
         KieContainer kieContainer = kieServices.getKieClasspathContainer();
         StatelessKieSession kieSession = kieContainer.newStatelessKieSession();
 
+        AvailableStand availableStand = new AvailableStand();
+
+//        kieSession.insert(stands);
+//        kieSession.insert(impairmentStand);
+//        kieSession.insert(availableStand);
+//        kieSession.fireAllRules();
+//
+
         KieCommands commands = kieServices.getCommands();
-        Command command = commands.newInsertElements(stands);
+        List<Object> elements = new ArrayList<>();
+        elements.addAll(stands);
+        elements.add(availableStand);
+        elements.add(impairmentStand);
+        elements.add(flightLegs.get(9));
+        elements.addAll(preferenceStands);
+        Command command = commands.newInsertElements(elements);
 
         kieSession.execute(command);
+
+        Collections.sort(availableStand.getStandScores());
+        for (StandScore standScore : availableStand.getStandScores()) {
+            System.out.println(standScore.getStandId() + ", " + standScore.getScore());
+        }
+    }
+
+    @Test
+    public void testStandAssignmentState() {
+        //
+        KieServices kieServices = KieServices.Factory.get();
+        KieContainer kieContainer = kieServices.getKieClasspathContainer();
+        KieSession kieSession = kieContainer.newKieSession();
+
+        AvailableStand availableStand = new AvailableStand();
+
+        stands.forEach(kieSession::insert);
+        kieSession.insert(impairmentStand);
+        kieSession.insert(availableStand);
+        kieSession.fireAllRules();
+
+        Collections.sort(availableStand.getStandScores());
+        for (StandScore standScore : availableStand.getStandScores()) {
+            System.out.println(standScore.getStandId() + ", " + standScore.getScore());
+        }
     }
 
     @Before
@@ -62,11 +105,6 @@ public class StandAssignmentServiceTest {
         //
         stands.add(new Stand(1, "A"));
         stands.add(new Stand(2, "B"));
-        stands.add(new Stand(3, "D"));
-        stands.add(new Stand(4, "F"));
-        stands.add(new Stand(5, "G"));
-        stands.add(new Stand(6, "D"));
-        stands.add(new Stand(7, "D"));
         stands.add(new Stand(8, "F"));
         stands.add(new Stand(9, "F"));
         stands.add(new Stand(10, "C"));
@@ -75,6 +113,11 @@ public class StandAssignmentServiceTest {
         stands.add(new Stand(13, "B"));
         stands.add(new Stand(14, "D"));
         stands.add(new Stand(15, "F"));
+        stands.add(new Stand(3, "D"));
+        stands.add(new Stand(4, "F"));
+        stands.add(new Stand(5, "G"));
+        stands.add(new Stand(6, "D"));
+        stands.add(new Stand(7, "D"));
 
         impairmentStand = new ImpairmentStand(new Integer[]{1, 5, 10, 13});
 
@@ -91,6 +134,6 @@ public class StandAssignmentServiceTest {
         flightLegs.add(new FlightLeg("7C", FlightSector.Depature, FlightType.International, "C", "0930"));
         flightLegs.add(new FlightLeg("KE", FlightSector.Depature, FlightType.International, "D", "1100"));
         flightLegs.add(new FlightLeg("OZ", FlightSector.Depature, FlightType.International, "A", "1230"));
-        flightLegs.add(new FlightLeg("OZ", FlightSector.Depature, FlightType.International, "C", "1530"));
+        flightLegs.add(new FlightLeg("KE", FlightSector.Depature, FlightType.International, "C", "1530"));
     }
 }
